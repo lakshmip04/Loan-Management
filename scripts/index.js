@@ -1,3 +1,4 @@
+
 document.getElementById('openSidebar').addEventListener('click', function() {
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('mainContent');
