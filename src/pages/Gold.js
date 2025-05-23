@@ -13,6 +13,24 @@ function Gold() {
   const [remarks, setRemarks] = useState('');
   const [ornaments, setOrnaments] = useState([]);
 
+  // Customer and Nominee details
+  const customerDetails = {
+    firstName: "John",
+    lastName: "Smith",
+    aadhaar: "1234-5678-9012",
+    mobile: "+91 9876543210",
+    civilScore: 750,
+    address: "123 Main Street, Bangalore, Karnataka, 560001",
+    registrationDate: "2023-05-15",
+    receiptId: "R-2023-0042",
+    accountNumber: "ACCT-00123456",
+  };
+
+  const nomineeDetails = {
+    name: "Sarah Johnson",
+    relationship: "Spouse",
+  };
+
   // Calculate net weight when gross weight changes
   React.useEffect(() => {
     if (grossWeight !== '') {
@@ -75,6 +93,67 @@ function Gold() {
     <div>
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">Gold Loan Application</h1>
+      </div>
+
+      {/* Customer Details Section */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow mb-6 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">Customer Details</h2>
+        <p className="text-sm text-gray-500 mb-6">Automatically fetched from the system</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+            <input type="text" value={`${customerDetails.firstName} ${customerDetails.lastName}`} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Aadhaar Number</label>
+            <input type="text" value={customerDetails.aadhaar} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+            <input type="text" value={customerDetails.mobile} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+          <div className="col-span-1 md:col-span-1 flex flex-col justify-end">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Civil Score</label>
+            <div className="flex items-center space-x-2">
+              <input type="text" value={customerDetails.civilScore} readOnly className="w-20 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+              <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div className="h-2 bg-green-400" style={{ width: `${(customerDetails.civilScore / 900) * 100}%` }}></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Registration Date</label>
+            <input type="text" value={customerDetails.registrationDate} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Receipt ID</label>
+            <input type="text" value={customerDetails.receiptId} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+          <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <input type="text" value={customerDetails.address} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Account Number</label>
+            <input type="text" value={customerDetails.accountNumber} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+        </div>
+      </div>
+
+      {/* Nominee Details Section */}
+      <div className="bg-white border border-gray-200 rounded-xl shadow mb-6 p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-1">Nominee Details</h2>
+        <p className="text-sm text-gray-500 mb-6">Automatically fetched from the system</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nominee Name</label>
+            <input type="text" value={nomineeDetails.name} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Relationship</label>
+            <input type="text" value={nomineeDetails.relationship} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+          </div>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow">
