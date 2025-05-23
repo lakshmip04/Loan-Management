@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --custom-color: #4f46e5;
+}
+
+.text-custom {
+  color: var(--custom-color);
+}
+
+.bg-custom {
+  background-color: var(--custom-color);
+}
+
+.rounded-button {
+  border-radius: 0.375rem;
+}
+
+/* Add any additional custom styles here */ 
