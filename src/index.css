@@ -25,55 +25,26 @@
     --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
   }
-}
 
-@layer components {
-  .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-colors;
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
   }
-  
-  .btn-primary {
-    @apply bg-custom text-white hover:bg-custom/90;
-  }
-
-  .btn-outline {
-    @apply border border-gray-300 hover:bg-gray-50;
-  }
-}
-
-/* Custom styles */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding: 0 2rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding: 0 4rem;
-  }
-}
-
-:root {
-  --custom-color: #4f46e5;
-}
-
-.text-custom {
-  color: var(--custom-color);
-}
-
-.bg-custom {
-  background-color: var(--custom-color);
-}
-
-.rounded-button {
-  border-radius: 0.375rem;
-}
-
-/* Add any additional custom styles here */ 
+} 

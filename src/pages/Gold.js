@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+// import { supabase } from '../supabaseClient';
 
 function Gold() {
+  const location = useLocation();
+  const member = location.state?.member;
+  const scheme = location.state?.scheme;
+
   const [uploadedImage, setUploadedImage] = useState(null);
   const [goldRate, setGoldRate] = useState(5850);
   const [grossWeight, setGrossWeight] = useState('');
@@ -12,17 +18,18 @@ function Gold() {
   const [ornamentType, setOrnamentType] = useState('');
   const [remarks, setRemarks] = useState('');
   const [ornaments, setOrnaments] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
 
   // Customer and Nominee details
   const customerDetails = {
-    firstName: "John",
-    lastName: "Smith",
-    aadhaar: "1234-5678-9012",
-    mobile: "+91 9876543210",
+    firstName: member?.name?.split(' ')[0] || "John",
+    lastName: member?.name?.split(' ')[1] || "Smith",
+    aadhaar: member?.aadhar || "1234-5678-9012",
+    mobile: member?.mobile || "+91 9876543210",
     civilScore: 750,
     address: "123 Main Street, Bangalore, Karnataka, 560001",
     registrationDate: "2023-05-15",
-    receiptId: "R-2023-0042",
+    receiptId: member?.id || "R-2023-0042",
     accountNumber: "ACCT-00123456",
   };
 
