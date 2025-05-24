@@ -29,7 +29,7 @@ const LoanTypeSelection = () => {
             <p className="mt-1 text-sm text-gray-500">Secure loans against gold assets</p>
           </div>
           <div className="space-y-3">
-            {[1, 2, 3, 4, 5].map((scheme) => (
+            {[1].map((scheme) => (
               <Button
                 key={scheme}
                 variant="outline"

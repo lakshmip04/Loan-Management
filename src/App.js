@@ -8,6 +8,7 @@ import NewMember from './pages/NewMember';
 import LoanDetails from './pages/LoanDetails';
 import Search from './pages/Search';
 import Gold from './pages/Gold';
+import BusinessLoan from './pages/BusinessLoan';
 import LoanTypeSelection from './components/LoanTypeSelection';
 import SearchMembers from './pages/SearchMembers';
 
@@ -20,7 +21,7 @@ function App() {
           <Header />
           <main className="pt-32 px-8 pb-8">
             <Routes>
-              <Route path="/" element={<LoanTypeSelection />} />
+              <Route path="/" element={<Dashboard />} />
               <Route path="/search-members" element={<SearchMembers />} />
               <Route path="/gold" element={<Gold />} />
               <Route path="/dashboard" element={<Dashboard />} />
@@ -28,6 +29,8 @@ function App() {
               <Route path="/new-member" element={<NewMember />} />
               <Route path="/loan-details" element={<LoanDetails />} />
               <Route path="/search" element={<Search />} />
+              <Route path="/loan-type-selection" element={<LoanTypeSelection />} />
+              <Route path="/business-loan" element={<BusinessLoan />} />
             </Routes>
           </main>
         </div>
