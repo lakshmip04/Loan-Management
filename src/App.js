@@ -9,6 +9,7 @@ import LoanDetails from './pages/LoanDetails';
 import Search from './pages/Search';
 import Gold from './pages/Gold';
 import BusinessLoan from './pages/BusinessLoan';
+import LendboxLoan from './pages/LendboxLoan';
 import LoanTypeSelection from './components/LoanTypeSelection';
 import SearchMembers from './pages/SearchMembers';
 
@@ -31,6 +32,7 @@ function App() {
               <Route path="/search" element={<Search />} />
               <Route path="/loan-type-selection" element={<LoanTypeSelection />} />
               <Route path="/business-loan" element={<BusinessLoan />} />
+              <Route path="/lendbox-loan" element={<LendboxLoan />} />
             </Routes>
           </main>
         </div>
