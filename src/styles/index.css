@@ -29,7 +29,7 @@
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-colors;
+    @apply px-4 py-2 rounded-md font-medium text-lg transition-colors;
   }
   
   .btn-primary {
@@ -61,7 +61,7 @@
 }
 
 :root {
-  --custom-color: #4f46e5;
+  --custom-color: #2019aa;
 }
 
 .text-custom {
