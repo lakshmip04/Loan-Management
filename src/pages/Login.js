@@ -153,7 +153,7 @@ export default function LoginPage() {
           </motion.div>
 
           <motion.h2 variants={itemVariants} className="text-[22px] font-normal text-gray-900 mb-1">
-            Staff Sign in
+             Sign in
           </motion.h2>
           <motion.p variants={itemVariants} className="text-[15px] text-gray-500 mb-10">
             Enter your credentials to access your account
