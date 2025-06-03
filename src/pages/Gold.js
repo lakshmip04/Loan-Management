@@ -26,7 +26,7 @@ function Gold() {
     lastName: member?.name?.split(' ')[1] || "Smith",
     aadhaar: member?.aadhar || "1234-5678-9012",
     mobile: member?.mobile || "+91 9876543210",
-    civilScore: 750,
+    cibilScore: 750,
     address: "123 Main Street, Bangalore, Karnataka, 560001",
     registrationDate: "2023-05-15",
     receiptId: member?.id || "R-2023-0042",
@@ -120,11 +120,11 @@ function Gold() {
             <input type="text" value={customerDetails.mobile} readOnly className="w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
           </div>
           <div className="col-span-1 md:col-span-1 flex flex-col justify-end">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Civil Score</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">CIBIL Score</label>
             <div className="flex items-center space-x-2">
-              <input type="text" value={customerDetails.civilScore} readOnly className="w-20 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
+              <input type="text" value={customerDetails.cibilScore} readOnly className="w-20 rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-gray-900 text-sm" />
               <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-2 bg-green-400" style={{ width: `${(customerDetails.civilScore / 900) * 100}%` }}></div>
+                <div className="h-2 bg-green-400" style={{ width: `${(customerDetails.cibilScore / 900) * 100}%` }}></div>
               </div>
             </div>
           </div>
