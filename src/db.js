@@ -34,11 +34,23 @@ const loanSchema = new mongoose.Schema({
   status: { type: String, default: 'Active' }
 });
 
+const paymentSchema = new mongoose.Schema({
+  loanID: { type: String, required: true },
+  amount: { type: Number, required: true },
+  date: { type: Date, default: Date.now },
+  status: { type: String, default: 'Completed' },
+  paymentMethod: { type: String },
+  transactionID: { type: String },
+  remarks: { type: String }
+});
+
 const Member = mongoose.model('Member', memberSchema);
 const Loan = mongoose.model('Loan', loanSchema);
+const Payment = mongoose.model('Payment', paymentSchema);
 
 module.exports = {
   connectDB,
   Member,
-  Loan
+  Loan,
+  Payment
 }; 

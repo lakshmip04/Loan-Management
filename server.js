@@ -1,13 +1,21 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const { connectDB, Member, Loan } = require('./src/db');
+const { connectDB, Member, Loan, Payment } = require('./src/db');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// CORS configuration
+const corsOptions = {
+  origin: ['http://localhost:3000', 'http://localhost:3001'], // Allow both server and React dev server
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -55,6 +63,39 @@ app.get('/api/loans', async (req, res) => {
   try {
     const loans = await Loan.find();
     res.json(loans);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/api/loans/:id', async (req, res) => {
+  try {
+    const loan = await Loan.findOne({ loanID: req.params.id });
+    if (!loan) {
+      return res.status(404).json({ message: 'Loan not found' });
+    }
+    
+    // Get member details
+    const member = await Member.findOne({ memberID: loan.memberID });
+    
+    // Get payment history
+    const payments = await Payment.find({ loanID: req.params.id }).sort({ date: -1 });
+    
+    // Format the response
+    const response = {
+      ...loan.toObject(),
+      memberName: member ? member.name : 'Unknown Member',
+      payments: payments.map(payment => ({
+        date: payment.date,
+        amount: payment.amount,
+        status: payment.status,
+        paymentMethod: payment.paymentMethod,
+        transactionID: payment.transactionID,
+        remarks: payment.remarks
+      }))
+    };
+    
+    res.json(response);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

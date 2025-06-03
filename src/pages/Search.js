@@ -1,83 +1,239 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Input } from "../components/ui/input";
+import { Button } from "../components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../components/ui/table";
 
 function Search() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  // Mock data for members - using the same data structure as SearchModal
+  const members = [
+    {
+      id: "MEM-10001",
+      name: "John Smith",
+      customerId: "67890",
+      mobile: "9876543210",
+      aadhar: "123456789012",
+      status: "Active",
+      lastLoan: "₹50,000",
+    },
+    {
+      id: "MEM-10002",
+      name: "Sarah Johnson",
+      customerId: "12345",
+      mobile: "8765432109",
+      aadhar: "234567890123",
+      status: "Active",
+      lastLoan: "₹75,000",
+    },
+    {
+      id: "MEM-10003",
+      name: "Michael Brown",
+      customerId: "54321",
+      mobile: "7654321098",
+      aadhar: "345678901234",
+      status: "Inactive",
+      lastLoan: "₹25,000",
+    },
+    {
+      id: "MEM-10004",
+      name: "Emily Davis",
+      customerId: "98765",
+      mobile: "6543210987",
+      aadhar: "456789012345",
+      status: "Active",
+      lastLoan: "₹100,000",
+    },
+    {
+      id: "MEM-10005",
+      name: "Robert Wilson",
+      customerId: "24680",
+      mobile: "5432109876",
+      aadhar: "567890123456",
+      status: "Active",
+      lastLoan: "₹60,000",
+    },
+  ];
+
+  const filteredMembers = members.filter(
+    (member) =>
+      member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      member.customerId.includes(searchQuery) ||
+      member.mobile.includes(searchQuery) ||
+      member.aadhar.includes(searchQuery)
+  );
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+  };
+
+  const handleViewLoans = (member) => {
+    navigate("/loan-details", {
+      state: {
+        loanId: `L-${member.id.split("-")[1]}`,
+        memberId: member.id,
+        memberName: member.name
+      },
+    });
+  };
+
   return (
-    <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Search Members</h1>
+    <div className="container mx-auto px-4 py-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Search Members</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          Search and manage member information
+        </p>
       </div>
 
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6">
-          <div className="mb-6">
-            <div className="flex space-x-4">
-              <div className="flex-1">
-                <input
-                  type="text"
-                  placeholder="Search by name, ID, or phone number..."
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-custom focus:ring-custom sm:text-sm"
-                />
-              </div>
-              <button className="!rounded-button bg-custom text-white px-4 py-2 text-sm font-medium hover:bg-indigo-600">
-                <i className="fas fa-search mr-2"></i>
-                Search
-              </button>
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead>
-                <tr>
-                  <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member ID</th>
-                  <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                  <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                  <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">M-2024-001</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">John Smith</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">+1 234-567-8900</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">john@example.com</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <Link to="/loan-details" className="text-custom hover:text-indigo-600 mr-3">
-                      <i className="fas fa-eye"></i>
-                    </Link>
-                    <button className="text-custom hover:text-indigo-600">
-                      <i className="fas fa-edit"></i>
-                    </button>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">M-2024-002</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Sarah Johnson</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">+1 234-567-8901</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">sarah@example.com</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <Link to="/loan-details" className="text-custom hover:text-indigo-600 mr-3">
-                      <i className="fas fa-eye"></i>
-                    </Link>
-                    <button className="text-custom hover:text-indigo-600">
-                      <i className="fas fa-edit"></i>
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      {/* Search and Filters */}
+      <div className="mb-6 grid gap-4 md:flex md:items-center md:justify-between">
+        <div className="relative flex-1 max-w-2xl flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="Search by name, ID, mobile, or Aadhar number"
+            value={searchQuery}
+            onChange={handleSearch}
+            className="pl-10"
+          />
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            🔍
+          </span>
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline">Filter</Button>
+          <Button variant="outline">Export</Button>
         </div>
       </div>
+
+      {/* Results */}
+      <div className="bg-white rounded-lg shadow">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin text-blue-500 text-2xl">⌛</div>
+          </div>
+        ) : (
+          <>
+            {filteredMembers.length > 0 ? (
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Member ID</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Mobile</TableHead>
+                      <TableHead>Aadhar</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Last Loan</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredMembers.map((member) => (
+                      <TableRow key={member.id}>
+                        <TableCell className="font-medium">
+                          {member.id}
+                        </TableCell>
+                        <TableCell>{member.name}</TableCell>
+                        <TableCell>{member.mobile}</TableCell>
+                        <TableCell>{member.aadhar}</TableCell>
+                        <TableCell>
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              member.status === "Active"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-gray-100 text-gray-800"
+                            }`}
+                          >
+                            {member.status}
+                          </span>
+                        </TableCell>
+                        <TableCell>{member.lastLoan}</TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => handleViewLoans(member)}
+                            >
+                              View Loans
+                            </Button>
+                            <Button variant="outline" size="sm">
+                              Edit
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-12">
+                <span className="text-gray-400 text-5xl mb-4">🔍</span>
+                <h3 className="text-lg font-medium text-gray-900">
+                  No members found
+                </h3>
+                <p className="mt-1 text-sm text-gray-500">
+                  {searchQuery
+                    ? `No results for "${searchQuery}"`
+                    : "Try searching for a member by name, ID, mobile, or Aadhar number"}
+                </p>
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => navigate("/new-member")}
+                >
+                  Add New Member
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Pagination */}
+      {filteredMembers.length > 0 && (
+        <div className="mt-6 flex items-center justify-between">
+          <div className="text-sm text-gray-500">
+            Showing <span className="font-medium">1</span> to{" "}
+            <span className="font-medium">{filteredMembers.length}</span> of{" "}
+            <span className="font-medium">{filteredMembers.length}</span>{" "}
+            results
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" disabled>
+              Previous
+            </Button>
+            <Button variant="outline" size="sm" disabled>
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
