@@ -1,6 +1,14 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated');
+    navigate('/login');
+  };
+
   return (
     <header className="h-16 flex items-center justify-between px-4 sm:px-6 bg-white border-b border-gray-200 fixed top-0 right-0 left-0 sm:left-64 z-40 transition-transform duration-300 ease-in-out">
       <button className="sm:hidden text-gray-500 hover:text-gray-600">
@@ -18,8 +26,12 @@ function Header() {
           <div className="text-sm text-gray-600">
             Session expires in: <span className="font-medium">10:00</span>
           </div>
-          <button className="relative !rounded-button bg-custom text-white px-4 py-2 text-sm font-medium hover:bg-indigo-600">
-            Extend Session
+          
+          <button 
+            onClick={handleLogout}
+            className="relative !rounded-button bg-red-600 text-white px-4 py-2 text-sm font-medium hover:bg-red-700"
+          >
+            Logout
           </button>
         </div>
       </div>
