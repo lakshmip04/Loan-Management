@@ -95,7 +95,7 @@ export default function LoginPage() {
             </svg>
 
             <motion.h1 variants={itemVariants} className="text-[32px] leading-[1.2] font-light text-gray-900 mb-6">
-              Loan Management System
+              EasyFin
             </motion.h1>
             <motion.p variants={itemVariants} className="text-gray-500 text-[15px] leading-relaxed">
               Efficiently manage loans, track payments, and handle member information with our comprehensive loan management solution.
