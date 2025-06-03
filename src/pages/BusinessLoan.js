@@ -30,7 +30,7 @@ function BusinessLoan() {
     lastName: member?.name?.split(' ')[1] || "Smith",
     aadhaar: member?.aadhar || "1234-5678-9012",
     mobile: member?.mobile || "+91 9876543210",
-    cibilScore: 750,
+    cibilScore: 350,
     address: "123 Main Street, Bangalore, Karnataka, 560001",
     registrationDate: "2023-05-15",
     receiptId: member?.id || "R-2023-0042",
