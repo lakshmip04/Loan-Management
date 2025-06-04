@@ -33,7 +33,7 @@ module.exports = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
-        custom: '#4f46e5',
+        custom: "hsl(var(--custom-color))", // Custom color here
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -57,4 +57,4 @@ module.exports = {
     },
   },
   plugins: [],
-} 
+}
