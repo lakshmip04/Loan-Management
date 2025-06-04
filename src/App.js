@@ -42,13 +42,14 @@ function App() {
       <Routes>
         {/* Public Route */}
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={
+          
+            <LoginPage />
+          
+        } />
 
         {/* Protected Routes */}
-        <Route path="/" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
+        
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
