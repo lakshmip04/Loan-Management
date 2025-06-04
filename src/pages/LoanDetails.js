@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Button } from "../components/ui/button";
+import { usePermissions } from '../hooks/usePermissions';
 
 function LoanDetails() {
   const [isLoading, setIsLoading] = useState(false);
   const location = useLocation();
+  const { canEdit, isManager } = usePermissions();
+  const [loanStatus, setLoanStatus] = useState('Pending');
+  
   const { loanId, memberId, memberName } = location.state || { 
     loanId: 'L-10001', 
     memberId: 'MEM-10001',
@@ -20,7 +24,7 @@ function LoanDetails() {
     interestRate: 12,
     startDate: "2024-02-01",
     endDate: "2025-02-01",
-    status: "Active",
+    status: loanStatus,
     payments: [
       {
         date: "2024-02-20",
@@ -46,6 +50,14 @@ function LoanDetails() {
     aadhar: "123456789012",
     status: "Active",
     lastLoan: `₹${loan.amount.toLocaleString()}`
+  };
+
+  const handleApproveLoan = () => {
+    setLoanStatus('Approved');
+  };
+
+  const handleRejectLoan = () => {
+    setLoanStatus('Rejected');
   };
 
   if (isLoading) {
@@ -133,7 +145,9 @@ function LoanDetails() {
                   <p className="text-sm text-gray-500">Status</p>
                   <p className="text-sm font-medium text-gray-900">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      loan.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                      loan.status === 'Approved' ? 'bg-green-100 text-green-800' : 
+                      loan.status === 'Rejected' ? 'bg-red-100 text-red-800' :
+                      'bg-yellow-100 text-yellow-800'
                     }`}>
                       {loan.status}
                     </span>
@@ -196,27 +210,54 @@ function LoanDetails() {
             <div className="p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
               <div className="space-y-4">
-                <Button 
-                  className="w-full !rounded-button flex items-center justify-center"
-                  variant="default"
-                >
-                  <i className="fas fa-money-check-alt mr-2"></i>
-                  Record Payment
-                </Button>
-                <Button 
-                  className="w-full !rounded-button flex items-center justify-center"
-                  variant="default"
-                >
-                  <i className="fas fa-file-alt mr-2"></i>
-                  Generate Statement
-                </Button>
-                <Button 
-                  className="w-full !rounded-button flex items-center justify-center"
-                  variant="default"
-                >
-                  <i className="fas fa-print mr-2"></i>
-                  Print Details
-                </Button>
+                {isManager ? (
+                  <>
+                    <Button 
+                      className="w-full !rounded-button flex items-center justify-center"
+                      variant="default"
+                      onClick={handleApproveLoan}
+                      disabled={loan.status !== 'Pending'}
+                    >
+                      <i className="fas fa-check-circle mr-2"></i>
+                      Approve Loan
+                    </Button>
+                    <Button 
+                      className="w-full !rounded-button flex items-center justify-center"
+                      variant="destructive"
+                      onClick={handleRejectLoan}
+                      disabled={loan.status !== 'Pending'}
+                    >
+                      <i className="fas fa-times-circle mr-2"></i>
+                      Reject Loan
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    {canEdit && (
+                      <Button 
+                        className="w-full !rounded-button flex items-center justify-center"
+                        variant="default"
+                      >
+                        <i className="fas fa-money-check-alt mr-2"></i>
+                        Record Payment
+                      </Button>
+                    )}
+                    <Button 
+                      className="w-full !rounded-button flex items-center justify-center"
+                      variant="default"
+                    >
+                      <i className="fas fa-file-alt mr-2"></i>
+                      Generate Statement
+                    </Button>
+                    <Button 
+                      className="w-full !rounded-button flex items-center justify-center"
+                      variant="default"
+                    >
+                      <i className="fas fa-print mr-2"></i>
+                      Print Details
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

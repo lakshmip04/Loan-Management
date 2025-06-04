@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../App';
 
 function Header() {
   const navigate = useNavigate();
+  const { role } = useContext(UserContext);
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('userRole');
     navigate('/login');
   };
 
@@ -16,7 +19,7 @@ function Header() {
       </button>
       <div className="flex items-center space-x-4 w-full">
         <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4 flex-1 text-left">
-          Welcome Staff, You Are Logged In!
+          Welcome {role}, You Are Logged In!
         </div>
         <button className="relative p-2">
           <i className="fas fa-bell text-gray-600"></i>
