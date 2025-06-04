@@ -1,36 +1,51 @@
 "use client"
 
 import React, { useState } from "react"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useNavigate } from "react-router-dom"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
 import { cn } from "../lib/utils"
-import { Mail, Lock, Eye, EyeOff, Shield, Clock, Zap, Globe } from "lucide-react"
+import { Mail, Lock, Eye, EyeOff, Shield, Clock, Zap, Globe, MapPin, Users, X } from "lucide-react"
+import backgroundImage from "../components/images/BackgroundImage.jpg"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  
+  const [role, setRole] = useState("")
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [showForm, setShowForm] = useState(false)
   const navigate = useNavigate()
+
+  
+  const roles = ["Staff", "Manager", "Area Manager", "Reviewer"]
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError("")
     setIsLoading(true)
 
+    if (!role) {
+      setError("Please select your role")
+      setIsLoading(false)
+      return
+    }
+
     // Simulate API call
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500))
-      // In a real app, you would validate credentials here
       // For demo purposes, let's check for a demo account
-      if (email === "demo@example.com" && password === "demo123") {
+      if (username === "demo@example.com" && password === "demo123") {
+        // Store user info in localStorage
         localStorage.setItem('isAuthenticated', 'true')
+        localStorage.setItem('userRole', role)
+        
         navigate("/dashboard")
       } else {
-        setError("Invalid email or password. Try demo@example.com / demo123")
+        setError("Invalid Username or password. Try demo@example.com / demo123")
       }
     } catch (err) {
       setError("We couldn't verify your credentials. Please try again.")
@@ -68,129 +83,119 @@ export default function LoginPage() {
     },
   }
 
+  const formVariants = {
+    hidden: { 
+      opacity: 0,
+      scale: 0.8,
+      y: -20
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 24,
+        duration: 0.2
+      }
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.8,
+      y: -20,
+      transition: {
+        duration: 0.2
+      }
+    }
+  }
+
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-white">
-      {/* Left panel - branding */}
-      <div className="hidden md:flex md:w-5/12 bg-[#FAFAFA] items-center justify-center p-12">
-        <motion.div initial="hidden" animate="visible" variants={containerVariants} className="max-w-md">
-          <motion.div variants={iconVariants} className="mb-12">
-            <svg
-              width="32"
-              height="32"
-              viewBox="0 0 32 32"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="mb-10"
+    <div 
+      className="min-h-screen w-full relative flex items-center justify-center"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+      onClick={() => !showForm && setShowForm(true)}
+    >
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={formVariants}
+            className="w-full max-w-[400px] bg-white/95 backdrop-blur-sm p-8 rounded-xl shadow-2xl relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setShowForm(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 transition-colors"
             >
-              <rect width="32" height="32" rx="8" fill="#F0F0F0" />
-              <path
-                d="M22 10H10V22H22V10Z"
-                stroke="#000000"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path d="M16 14V18" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M14 16H18" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
+              <X className="h-6 w-6" />
+            </button>
 
-            <motion.h1 variants={itemVariants} className="text-[32px] leading-[1.2] font-light text-gray-900 mb-6">
-              EasyFin
-            </motion.h1>
-            <motion.p variants={itemVariants} className="text-gray-500 text-[15px] leading-relaxed">
-              Efficiently manage loans, track payments, and handle member information with our comprehensive loan management solution.
-            </motion.p>
-          </motion.div>
+            <div className="text-center mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900">EasyFin</h2>
+              <p className="text-gray-600 mt-2">Sign in to your account</p>
+            </div>
 
-          <motion.div variants={containerVariants} className="space-y-6">
-            <motion.div variants={itemVariants} className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                <Shield className="h-5 w-5 text-gray-700" />
-              </div>
-              <span className="text-[15px] text-gray-700">Secure loan processing</span>
-            </motion.div>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-[14px] rounded"
+              >
+                {error}
+              </motion.div>
+            )}
 
-            <motion.div variants={itemVariants} className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                <Clock className="h-5 w-5 text-gray-700" />
-              </div>
-              <span className="text-[15px] text-gray-700">Real-time tracking</span>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                <Zap className="h-5 w-5 text-gray-700" />
-              </div>
-              <span className="text-[15px] text-gray-700">Fast processing</span>
-            </motion.div>
-
-            <motion.div variants={itemVariants} className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                <Globe className="h-5 w-5 text-gray-700" />
-              </div>
-              <span className="text-[15px] text-gray-700">Multi-branch support</span>
-            </motion.div>
-          </motion.div>
-        </motion.div>
-      </div>
-
-      {/* Right panel - login form */}
-      <div className="w-full md:w-7/12 flex items-center justify-center p-6 md:p-20 bg-white">
-        <motion.div initial="hidden" animate="visible" variants={containerVariants} className="w-full max-w-[400px]">
-          <motion.div variants={iconVariants} className="md:hidden mb-10">
-            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="32" height="32" rx="8" fill="#F0F0F0" />
-              <path
-                d="M22 10H10V22H22V10Z"
-                stroke="#000000"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path d="M16 14V18" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              <path d="M14 16H18" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </motion.div>
-
-          <motion.h2 variants={itemVariants} className="text-[22px] font-normal text-gray-900 mb-1">
-             Sign in
-          </motion.h2>
-          <motion.p variants={itemVariants} className="text-[15px] text-gray-500 mb-10">
-            Enter your credentials to access your account
-          </motion.p>
-
-          {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-[14px] rounded"
-            >
-              {error}
-            </motion.div>
-          )}
-
-          <form onSubmit={handleSubmit}>
-            <motion.div variants={containerVariants} className="space-y-6">
-              <motion.div variants={itemVariants}>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
                 <div className="text-[14px] font-normal text-gray-700 mb-1.5 block">
-                  Email
+                  Username
                 </div>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>
                   <Input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
                     className="h-11 pl-10 bg-white border-gray-200 rounded-md focus:border-gray-400 focus:ring-0 text-[15px]"
                     placeholder="you@company.com"
                     required
                   />
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div variants={itemVariants}>
+              <div>
+                <div className="text-[14px] font-normal text-gray-700 mb-1.5 block">
+                  Role
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Users className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <select
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    className="h-11 pl-10 w-full bg-white border-gray-200 rounded-md focus:border-gray-400 focus:ring-0 text-[15px]"
+                    required
+                  >
+                    <option value="">Select Role</option>
+                    {roles.map((r) => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="text-[14px] font-normal text-gray-700">
                     Password
@@ -228,78 +233,52 @@ export default function LoginPage() {
                     </motion.button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div variants={itemVariants} className="pt-2">
-                <motion.div
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+              >
+                <Button
+                  type="submit"
+                  className={cn(
+                    "w-full h-11 bg-custom hover:bg-indigo-600 text-white font-normal rounded-md transition-all duration-200 text-[15px]",
+                    isLoading && "opacity-90 cursor-not-allowed"
+                  )}
+                  disabled={isLoading}
                 >
-                  <Button
-                    type="submit"
-                    className={cn(
-                      "w-full h-11 bg-custom hover:bg-indigo-600 text-white font-normal rounded-md transition-all duration-200 text-[15px]",
-                      isLoading && "opacity-90 cursor-not-allowed",
-                    )}
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <div className="flex items-center justify-center">
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                          className="h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"
-                        />
-                        <span>Signing in</span>
-                      </div>
-                    ) : (
-                      "Sign in"
-                    )}
-                  </Button>
-                </motion.div>
+                  {isLoading ? (
+                    <div className="flex items-center justify-center">
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                        className="h-5 w-5 border-2 border-white border-t-transparent rounded-full mr-2"
+                      />
+                      <span>Signing in</span>
+                    </div>
+                  ) : (
+                    "Sign in"
+                  )}
+                </Button>
               </motion.div>
-            </motion.div>
-          </form>
+            </form>
 
-          <motion.div variants={itemVariants} className="mt-10 pt-6 border-t border-gray-100">
-            <p className="text-[14px] text-gray-500 text-center">
-              Don't have an account?{" "}
-              <motion.a
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                href="#"
-                className="font-normal text-gray-900 hover:text-gray-700 transition-colors"
-              >
-                Contact your administrator
-              </motion.a>
-            </p>
+            <div className="mt-6 text-center">
+              <p className="text-[13px] text-gray-500">
+                By signing in, you agree to our{" "}
+                <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Terms
+                </a>{" "}
+                and{" "}
+                <a href="#" className="text-gray-700 hover:text-gray-900 transition-colors">
+                  Privacy Policy
+                </a>
+              </p>
+            </div>
           </motion.div>
-
-          <motion.div variants={itemVariants} className="mt-12">
-            <p className="text-[13px] text-gray-400 text-center">
-              By signing in, you agree to our{" "}
-              <motion.a
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                href="#"
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                Terms
-              </motion.a>{" "}
-              and{" "}
-              <motion.a
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                href="#"
-                className="text-gray-500 hover:text-gray-700 transition-colors"
-              >
-                Privacy Policy
-              </motion.a>
-            </p>
-          </motion.div>
-        </motion.div>
-      </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 } 

@@ -213,7 +213,7 @@ function Search() {
             )}
           </>
         )}
-      </div>
+            </div>
 
       {/* Pagination */}
       {filteredMembers.length > 0 && (

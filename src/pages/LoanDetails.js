@@ -168,21 +168,21 @@ function LoanDetails() {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                           {payment.transactionID}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                             payment.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
                           }`}>
                             {payment.status}
                           </span>
-                        </td>
-                      </tr>
+                      </td>
+                    </tr>
                     ))}
                     {loan.payments.length === 0 && (
-                      <tr>
+                    <tr>
                         <td colSpan="4" className="px-6 py-4 text-center text-sm text-gray-500">
                           No payment records found
-                        </td>
-                      </tr>
+                      </td>
+                    </tr>
                     )}
                   </tbody>
                 </table>
