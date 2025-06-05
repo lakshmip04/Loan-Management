@@ -1,10 +1,12 @@
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../App';
+import { useSessionTimer } from '../hooks/useSessionTimer';
 
 function Header() {
   const navigate = useNavigate();
   const { role } = useContext(UserContext);
+  const { formattedTime } = useSessionTimer();
 
   const handleLogout = () => {
     localStorage.removeItem('isAuthenticated');
@@ -27,7 +29,7 @@ function Header() {
         </button>
         <div className="flex items-center space-x-6">
           <div className="text-sm text-gray-600">
-            Session expires in: <span className="font-medium">10:00</span>
+            Session expires in: <span className="font-medium">{formattedTime}</span>
           </div>
           
           <button 

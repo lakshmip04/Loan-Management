@@ -1,10 +1,5 @@
-import React, { createContext, useContext } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
+import React, { createContext } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
@@ -30,19 +25,31 @@ import Settings from "./pages/Settings";
 // Create context for user role and permissions
 export const UserContext = createContext(null);
 
-// Protected Route Component
-const ProtectedRoute = ({ children, allowedRoles = ["Staff", "Manager"] }) => {
+// Auth Guard Component
+const AuthGuard = ({ children }) => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-  const userRole = localStorage.getItem("userRole");
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
+  return children;
+};
+
+// Role Guard Component
+const RoleGuard = ({ children, allowedRoles }) => {
+  const userRole = localStorage.getItem("userRole");
+
   if (!allowedRoles.includes(userRole)) {
-    return <Navigate to={`/${userRole.toLowerCase()}-dashboard`} replace />;
+    return <Navigate to="/unauthorized" replace />;
   }
 
+  return children;
+};
+
+// Protected Layout Component
+const ProtectedLayout = ({ children }) => {
+  const userRole = localStorage.getItem("userRole");
   const canEdit = userRole === "Staff";
 
   return (
@@ -58,12 +65,36 @@ const ProtectedRoute = ({ children, allowedRoles = ["Staff", "Manager"] }) => {
   );
 };
 
-// Initial Route Redirect Component
-const InitialRouteRedirect = () => {
-  const userRole = localStorage.getItem("userRole");
+// Protected Route Component
+const ProtectedRoute = ({ element, allowedRoles = ["Staff", "Manager"] }) => {
+  return (
+    <AuthGuard>
+      <RoleGuard allowedRoles={allowedRoles}>
+        <ProtectedLayout>
+          {element}
+        </ProtectedLayout>
+      </RoleGuard>
+    </AuthGuard>
+  );
+};
+
+// Public Route Component
+const PublicRoute = ({ element }) => {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
 
-  if (!isAuthenticated) {
+  if (isAuthenticated) {
+    const userRole = localStorage.getItem("userRole");
+    return <Navigate to={`/${userRole.toLowerCase()}-dashboard`} replace />;
+  }
+
+  return element;
+};
+
+// Role-based Dashboard Redirect
+const RoleBasedRedirect = () => {
+  const userRole = localStorage.getItem("userRole");
+
+  if (!userRole) {
     return <Navigate to="/login" replace />;
   }
 
@@ -75,188 +106,63 @@ function App() {
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<InitialRouteRedirect />} />
+        <Route path="/login" element={<PublicRoute element={<LoginPage />} />} />
+        <Route path="/" element={<PublicRoute element={<LoginPage />} />} />
 
-        {/* Staff Dashboard and Routes */}
-        <Route
-          path="/staff-dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
+        {/* Role-based Dashboard Routes */}
+        <Route path="/staff-dashboard" element={<ProtectedRoute element={<Dashboard />} allowedRoles={["Staff"]} />} />
+        <Route path="/manager-dashboard" element={<ProtectedRoute element={<ManagerDashboard />} allowedRoles={["Manager"]} />} />
 
-        <Route
-          path="/manager-dashboard"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <ManagerDashboard />
-            </ProtectedRoute>
-          }
-        />
+        {/* Redirect to role-based dashboard */}
+        <Route path="/dashboard" element={<RoleBasedRedirect />} />
 
         {/* Staff Routes */}
-        <Route
-          path="/search-members"
-          element={
-            <ProtectedRoute allowedRoles={["Staff", "Manager"]}>
-              <SearchMembers />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/members"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <Members />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/new-member"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <NewMember />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/loan-type-selection"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <LoanTypeSelection />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/gold"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <Gold />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/business-loan"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <BusinessLoan />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lendbox-loan"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <LendboxLoan />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/payments"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <Payments />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <Settings />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/search"
-          element={
-            <ProtectedRoute allowedRoles={["Staff"]}>
-              <Search />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/search-members" element={<ProtectedRoute element={<SearchMembers />} allowedRoles={["Staff", "Manager"]} />} />
+        <Route path="/members" element={<ProtectedRoute element={<Members />} allowedRoles={["Staff"]} />} />
+        <Route path="/new-member" element={<ProtectedRoute element={<NewMember />} allowedRoles={["Staff"]} />} />
+        <Route path="/loan-type-selection" element={<ProtectedRoute element={<LoanTypeSelection />} allowedRoles={["Staff"]} />} />
+        <Route path="/gold" element={<ProtectedRoute element={<Gold />} allowedRoles={["Staff"]} />} />
+        <Route path="/business-loan" element={<ProtectedRoute element={<BusinessLoan />} allowedRoles={["Staff"]} />} />
+        <Route path="/lendbox-loan" element={<ProtectedRoute element={<LendboxLoan />} allowedRoles={["Staff"]} />} />
+        <Route path="/payments" element={<ProtectedRoute element={<Payments />} allowedRoles={["Staff"]} />} />
+        <Route path="/settings" element={<ProtectedRoute element={<Settings />} allowedRoles={["Staff"]} />} />
+        <Route path="/search" element={<ProtectedRoute element={<Search />} allowedRoles={["Staff"]} />} />
 
         {/* Manager Routes */}
-        <Route
-          path="/member-details"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <Members />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/activity-feed"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <ActivityFeed />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/gold-loan-approvals"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <LoanApprovals type="gold" />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/personal-loan-approvals"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <LoanApprovals type="personal" />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/loan-approvals"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <LoanApprovals type="all" />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/payment-approvals"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <PaymentApprovals />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/fund-transfer"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <FundTransfer />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/expense-approvals"
-          element={
-            <ProtectedRoute allowedRoles={["Manager"]}>
-              <ExpenseApprovals />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/member-details" element={<ProtectedRoute element={<Members />} allowedRoles={["Manager"]} />} />
+        <Route path="/activity-feed" element={<ProtectedRoute element={<ActivityFeed />} allowedRoles={["Manager"]} />} />
+        <Route path="/gold-loan-approvals" element={<ProtectedRoute element={<LoanApprovals type="gold" />} allowedRoles={["Manager"]} />} />
+        <Route path="/personal-loan-approvals" element={<ProtectedRoute element={<LoanApprovals type="personal" />} allowedRoles={["Manager"]} />} />
+        <Route path="/loan-approvals" element={<ProtectedRoute element={<LoanApprovals type="all" />} allowedRoles={["Manager"]} />} />
+        <Route path="/payment-approvals" element={<ProtectedRoute element={<PaymentApprovals />} allowedRoles={["Manager"]} />} />
+        <Route path="/fund-transfer" element={<ProtectedRoute element={<FundTransfer />} allowedRoles={["Manager"]} />} />
+        <Route path="/expense-approvals" element={<ProtectedRoute element={<ExpenseApprovals />} allowedRoles={["Manager"]} />} />
 
         {/* Shared Routes */}
-        <Route
-          path="/loan-details"
-          element={
-            <ProtectedRoute>
-              <LoanDetails />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/loan-details" element={<ProtectedRoute element={<LoanDetails />} />} />
 
-        {/* Redirect all other routes to role-specific dashboard */}
-        <Route path="*" element={<InitialRouteRedirect />} />
+        {/* Unauthorized Route */}
+        <Route path="/unauthorized" element={
+          <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">Unauthorized Access</h1>
+              <p className="text-gray-600 mb-8">You don't have permission to access this page.</p>
+              <button
+                onClick={() => window.history.back()}
+                className="bg-custom text-white px-6 py-2 rounded-md hover:bg-indigo-600 transition-colors"
+              >
+                Go Back
+              </button>
+            </div>
+          </div>
+        } />
+
+        {/* Catch-all route - redirect to login if not authenticated, or to role-specific dashboard if authenticated */}
+        <Route path="*" element={
+          <AuthGuard>
+            <RoleBasedRedirect />
+          </AuthGuard>
+        } />
       </Routes>
     </Router>
   );
