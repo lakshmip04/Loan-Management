@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { members } from '../services/api';
 
 function NewMember() {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,10 +22,39 @@ function NewMember() {
     accountType: ''
   });
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission
-    console.log(formData);
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Format the data according to our API requirements
+      const memberData = {
+        ...formData,
+        cibilScore: Number(formData.cibilScore),
+        miscCharges: Number(formData.miscCharges),
+        // Ensure proper date format
+        dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
+        registrationDate: new Date(formData.registrationDate).toISOString()
+      };
+
+      // Send data to the API
+      const response = await members.create(memberData);
+
+      if (response.data.success) {
+        // Show success message
+        alert('Member registered successfully!');
+        // Redirect to members list or show success page
+        navigate('/members');
+      } else {
+        throw new Error(response.data.error || 'Failed to register member');
+      }
+    } catch (err) {
+      console.error('Error registering member:', err);
+      setError(err.response?.data?.error || err.message || 'Failed to register member');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -27,6 +62,12 @@ function NewMember() {
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">New Member Registration</h1>
       </div>
+
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-xl p-8 space-y-8">
         {/* Personal Details Section */}
@@ -218,28 +259,33 @@ function NewMember() {
         <div className="flex justify-end space-x-6 pt-8">
           <button
             type="reset"
-            onClick={() => setFormData({
-              ...formData,
-              firstName: '',
-              lastName: '',
-              dateOfBirth: '',
-              aadharNumber: '',
-              gender: '',
-              mobileNumber: '',
-              cibilScore: '',
-              address: '',
-              miscCharges: '',
-              accountType: ''
-            })}
+            onClick={() => {
+              setFormData({
+                ...formData,
+                firstName: '',
+                lastName: '',
+                dateOfBirth: '',
+                aadharNumber: '',
+                gender: '',
+                mobileNumber: '',
+                cibilScore: '',
+                address: '',
+                miscCharges: '',
+                accountType: ''
+              });
+              setError(null);
+            }}
             className="!rounded-lg px-6 py-3 text-base font-medium text-gray-700 bg-white border border-gray-300 hover:bg-gray-50"
+            disabled={loading}
           >
             Clear Form
           </button>
           <button
             type="submit"
-            className="!rounded-lg px-6 py-3 text-base font-medium text-white bg-custom hover:bg-indigo-600"
+            className="!rounded-lg px-6 py-3 text-base font-medium text-white bg-custom hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading}
           >
-            Submit Registration
+            {loading ? 'Submitting...' : 'Submit Registration'}
           </button>
         </div>
       </form>
