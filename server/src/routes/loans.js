@@ -9,6 +9,7 @@ const {
   getLoanDetails,
   updateLoanStatus
 } = require('../controllers/loanController');
+const VerifiedLoan = require('../models/verifiedloan');
 
 // Apply middleware to all routes
 router.use(authenticateToken);
@@ -43,5 +44,17 @@ router.patch('/:id/status',
   authorize(['manager', 'ceo']),
   updateLoanStatus
 );
+
+// Get all verified loans
+router.get('/verified', async (req, res) => {
+  try {
+    const loans = await VerifiedLoan.find()
+      .sort({ Date: -1 }); // Sort by date in descending order
+    res.json(loans);
+  } catch (error) {
+    console.error('Error fetching verified loans:', error);
+    res.status(500).json({ error: 'Failed to fetch verified loans' });
+  }
+});
 
 module.exports = router; 
