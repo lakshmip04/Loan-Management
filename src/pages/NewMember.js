@@ -8,18 +8,18 @@ function NewMember() {
   const [error, setError] = useState(null);
   
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    aadharNumber: '',
-    gender: '',
-    mobileNumber: '',
-    cibilScore: '',
-    address: '',
-    registrationDate: new Date().toISOString().split('T')[0],
-    miscCharges: '',
-    transactionId: 'TXN' + Date.now(),
-    accountType: ''
+    cusfname: '',
+    cussname: '',
+    cusdob: '',
+    cusgen: '',
+    cusmob: '',
+    cusadd: '',
+    cusaadhaar: '',
+    fee: '',
+    reference: 'SELF',
+    Date: new Date().toISOString().split('T')[0],
+    cibil: '',
+    category: 0
   });
 
   const handleSubmit = async (e) => {
@@ -31,11 +31,13 @@ function NewMember() {
       // Format the data according to our API requirements
       const memberData = {
         ...formData,
-        cibilScore: Number(formData.cibilScore),
-        miscCharges: Number(formData.miscCharges),
+        cusmob: Number(formData.cusmob),
+        fee: Number(formData.fee),
+        cibil: Number(formData.cibil),
+        category: Number(formData.category),
         // Ensure proper date format
-        dateOfBirth: new Date(formData.dateOfBirth).toISOString(),
-        registrationDate: new Date(formData.registrationDate).toISOString()
+        cusdob: new Date(formData.cusdob).toISOString(),
+        Date: new Date(formData.Date).toISOString()
       };
 
       // Send data to the API
@@ -82,8 +84,8 @@ function NewMember() {
                 pattern="[A-Za-z ]+"
                 className="w-full h-12 border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-lg"
                 placeholder="Enter first name"
-                value={formData.firstName}
-                onChange={(e) => setFormData({...formData, firstName: e.target.value})}
+                value={formData.cusfname}
+                onChange={(e) => setFormData({...formData, cusfname: e.target.value})}
               />
             </div>
             <div>
@@ -94,8 +96,8 @@ function NewMember() {
                 pattern="[A-Za-z ]+"
                 className="w-full h-12 border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-lg"
                 placeholder="Enter last name"
-                value={formData.lastName}
-                onChange={(e) => setFormData({...formData, lastName: e.target.value})}
+                value={formData.cussname}
+                onChange={(e) => setFormData({...formData, cussname: e.target.value})}
               />
             </div>
             <div>
@@ -103,9 +105,10 @@ function NewMember() {
               <input
                 type="date"
                 required
+                max={new Date().toISOString().split('T')[0]}
                 className="w-full h-12 border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-lg"
-                value={formData.dateOfBirth}
-                onChange={(e) => setFormData({...formData, dateOfBirth: e.target.value})}
+                value={formData.cusdob}
+                onChange={(e) => setFormData({...formData, cusdob: e.target.value})}
               />
             </div>
             <div>
@@ -116,8 +119,8 @@ function NewMember() {
                 pattern="[0-9]{4}-[0-9]{4}-[0-9]{4}"
                 className="w-full h-12 border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-lg"
                 placeholder="XXXX-XXXX-XXXX"
-                value={formData.aadharNumber}
-                onChange={(e) => setFormData({...formData, aadharNumber: e.target.value})}
+                value={formData.cusaadhaar}
+                onChange={(e) => setFormData({...formData, cusaadhaar: e.target.value})}
               />
             </div>
             <div>
@@ -130,8 +133,8 @@ function NewMember() {
                     value="male"
                     className="w-5 h-5 text-custom focus:ring-custom"
                     required
-                    checked={formData.gender === 'male'}
-                    onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                    checked={formData.cusgen === 'male'}
+                    onChange={(e) => setFormData({...formData, cusgen: e.target.value})}
                   />
                   <span className="ml-2 text-base">Male</span>
                 </label>
@@ -141,8 +144,8 @@ function NewMember() {
                     name="gender"
                     value="female"
                     className="w-5 h-5 text-custom focus:ring-custom"
-                    checked={formData.gender === 'female'}
-                    onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                    checked={formData.cusgen === 'female'}
+                    onChange={(e) => setFormData({...formData, cusgen: e.target.value})}
                   />
                   <span className="ml-2 text-base">Female</span>
                 </label>
@@ -152,8 +155,8 @@ function NewMember() {
                     name="gender"
                     value="other"
                     className="w-5 h-5 text-custom focus:ring-custom"
-                    checked={formData.gender === 'other'}
-                    onChange={(e) => setFormData({...formData, gender: e.target.value})}
+                    checked={formData.cusgen === 'other'}
+                    onChange={(e) => setFormData({...formData, cusgen: e.target.value})}
                   />
                   <span className="ml-2 text-base">Other</span>
                 </label>
@@ -169,8 +172,8 @@ function NewMember() {
                   pattern="[0-9]{10}"
                   className="flex-1 h-12 border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-r-lg !rounded-l-none"
                   placeholder="Enter mobile number"
-                  value={formData.mobileNumber}
-                  onChange={(e) => setFormData({...formData, mobileNumber: e.target.value})}
+                  value={formData.cusmob}
+                  onChange={(e) => setFormData({...formData, cusmob: e.target.value})}
                 />
               </div>
             </div>
@@ -180,10 +183,11 @@ function NewMember() {
                 type="number"
                 min="300"
                 max="900"
+                required
                 className="w-full h-12 border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-lg"
                 placeholder="Enter CIBIL score"
-                value={formData.cibilScore}
-                onChange={(e) => setFormData({...formData, cibilScore: e.target.value})}
+                value={formData.cibil}
+                onChange={(e) => setFormData({...formData, cibil: e.target.value})}
               />
             </div>
             <div className="md:col-span-2">
@@ -193,8 +197,8 @@ function NewMember() {
                 rows="4"
                 className="w-full border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-lg"
                 placeholder="Enter full address"
-                value={formData.address}
-                onChange={(e) => setFormData({...formData, address: e.target.value})}
+                value={formData.cusadd}
+                onChange={(e) => setFormData({...formData, cusadd: e.target.value})}
               ></textarea>
             </div>
           </div>
@@ -205,16 +209,16 @@ function NewMember() {
           <h2 className="text-2xl font-semibold text-gray-900 mb-6">Registration Details</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">Date of Registration</label>
+              <label className="block text-base font-medium text-gray-700 mb-2">Registration Date</label>
               <input
                 type="date"
-                value={formData.registrationDate}
+                value={formData.Date}
                 className="w-full h-12 border-gray-300 bg-gray-50 cursor-not-allowed text-base !rounded-lg"
                 disabled
               />
             </div>
             <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">Miscellaneous Charges *</label>
+              <label className="block text-base font-medium text-gray-700 mb-2">Registration Fee *</label>
               <div className="flex">
                 <span className="inline-flex items-center px-4 !rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-base h-12">₹</span>
                 <input
@@ -223,34 +227,21 @@ function NewMember() {
                   min="0"
                   step="0.01"
                   className="flex-1 h-12 border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-r-lg !rounded-l-none"
-                  placeholder="Enter amount"
-                  value={formData.miscCharges}
-                  onChange={(e) => setFormData({...formData, miscCharges: e.target.value})}
+                  placeholder="Enter fee amount"
+                  value={formData.fee}
+                  onChange={(e) => setFormData({...formData, fee: e.target.value})}
                 />
               </div>
             </div>
             <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">Transaction ID/Bill No</label>
+              <label className="block text-base font-medium text-gray-700 mb-2">Reference</label>
               <input
                 type="text"
-                value={formData.transactionId}
-                className="w-full h-12 border-gray-300 bg-gray-50 cursor-not-allowed text-base !rounded-lg"
-                disabled
-              />
-            </div>
-            <div>
-              <label className="block text-base font-medium text-gray-700 mb-2">Account Type *</label>
-              <select
-                required
                 className="w-full h-12 border-gray-300 focus:border-custom focus:ring-custom text-base !rounded-lg"
-                value={formData.accountType}
-                onChange={(e) => setFormData({...formData, accountType: e.target.value})}
-              >
-                <option value="">Select account type</option>
-                <option value="A">Type A</option>
-                <option value="B">Type B</option>
-                <option value="C">Type C</option>
-              </select>
+                placeholder="Enter reference (optional)"
+                value={formData.reference}
+                onChange={(e) => setFormData({...formData, reference: e.target.value})}
+              />
             </div>
           </div>
         </div>
@@ -261,17 +252,18 @@ function NewMember() {
             type="reset"
             onClick={() => {
               setFormData({
-                ...formData,
-                firstName: '',
-                lastName: '',
-                dateOfBirth: '',
-                aadharNumber: '',
-                gender: '',
-                mobileNumber: '',
-                cibilScore: '',
-                address: '',
-                miscCharges: '',
-                accountType: ''
+                cusfname: '',
+                cussname: '',
+                cusdob: '',
+                cusgen: '',
+                cusmob: '',
+                cusadd: '',
+                cusaadhaar: '',
+                fee: '',
+                reference: 'SELF',
+                Date: new Date().toISOString().split('T')[0],
+                cibil: '',
+                category: 0
               });
               setError(null);
             }}

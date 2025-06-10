@@ -1,79 +1,85 @@
 const mongoose = require('mongoose');
 
-const memberSchema = new mongoose.Schema({
-  firstName: {
+const MemberSchema = new mongoose.Schema({
+  cusid: {
     type: String,
     required: true,
-    trim: true
+    unique: true,
+    default: () => 'CUS' + Date.now()
   },
-  lastName: {
+  cusfname: {
     type: String,
-    required: true,
+    required: [true, 'First name is required'],
     trim: true
   },
-  dateOfBirth: {
+  cussname: {
+    type: String,
+    required: [true, 'Last name is required'],
+    trim: true
+  },
+  cusdob: {
     type: Date,
-    required: true
+    required: [true, 'Date of birth is required']
   },
-  gender: {
+  cusgen: {
     type: String,
-    required: true,
+    required: [true, 'Gender is required'],
     enum: ['male', 'female', 'other']
   },
-  mobileNumber: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-    index: true
-  },
-  address: {
-    type: String,
-    required: true
-  },
-  aadharNumber: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
-    match: [/^\d{4}-\d{4}-\d{4}$/, 'Please enter a valid Aadhar number in format XXXX-XXXX-XXXX'],
-    index: true
-  },
-  accountType: {
-    type: String,
-    required: true,
-    enum: ['A', 'B', 'C']
-  },
-  cibilScore: {
+  cusmob: {
     type: Number,
-    required: true,
+    required: [true, 'Mobile number is required'],
+    validate: {
+      validator: function(v) {
+        return /^\d{10}$/.test(v.toString());
+      },
+      message: props => `${props.value} is not a valid mobile number!`
+    }
+  },
+  cusadd: {
+    type: String,
+    required: [true, 'Address is required']
+  },
+  cusaadhaar: {
+    type: String,
+    required: [true, 'Aadhar number is required'],
+    unique: true,
+    validate: {
+      validator: function(v) {
+        return /^\d{4}-\d{4}-\d{4}$/.test(v);
+      },
+      message: props => `${props.value} is not a valid Aadhar number!`
+    }
+  },
+  fee: {
+    type: Number,
+    required: [true, 'Fee is required'],
+    min: 0
+  },
+  reference: {
+    type: String,
+    default: 'SELF'
+  },
+  Date: {
+    type: Date,
+    default: Date.now
+  },
+  cibil: {
+    type: Number,
+    required: [true, 'CIBIL score is required'],
     min: 300,
     max: 900
   },
-  miscCharges: {
+  category: {
     type: Number,
-    required: true
-  },
-  transactionId: {
-    type: String,
-    required: true,
-    unique: true,
-    index: true
-  },
-  registrationDate: {
-    type: Date,
-    required: true
-  },
-  status: {
-    type: String,
-    enum: ['active', 'inactive', 'blocked'],
-    default: 'active'
+    default: 0
   }
-}, {
-  timestamps: true
+}, { 
+  collection: 'customer',
+  timestamps: true 
 });
 
 // Text index for search
-memberSchema.index({ firstName: 'text', lastName: 'text' });
+MemberSchema.index({ cusfname: 'text', cussname: 'text' });
 
-module.exports = mongoose.model('Member', memberSchema); 
+module.exports = mongoose.model('Member', MemberSchema, 'customer'); 
