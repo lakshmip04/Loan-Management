@@ -1,10 +1,13 @@
-const app = require('./app');
+const app = require('../app');
 const config = require('./config/config');
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
 
+// Load environment variables
 dotenv.config();
+
+const PORT = process.env.PORT || 5000;
 
 // Create required directories
 const dirs = [
@@ -23,8 +26,8 @@ dirs.forEach(dir => {
 });
 
 // Start server
-const server = app.listen(config.port, () => {
-  console.log(`Server is running on port ${config.port}`);
+const server = app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
   console.log(`Environment: ${config.nodeEnv}`);
 });
 

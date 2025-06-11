@@ -1,59 +1,57 @@
 const mongoose = require('mongoose');
 
-const MemberSchema = new mongoose.Schema({
+const customerSchema = new mongoose.Schema({
   cusid: {
     type: String,
-    required: true,
     unique: true,
-    default: () => 'CUS' + Date.now()
+    required: false
   },
   cusfname: {
     type: String,
-    required: [true, 'First name is required'],
+    required: true,
     trim: true
   },
   cussname: {
     type: String,
-    required: [true, 'Last name is required'],
+    required: true,
     trim: true
   },
   cusdob: {
     type: Date,
-    required: [true, 'Date of birth is required']
+    required: true
   },
   cusgen: {
     type: String,
-    required: [true, 'Gender is required'],
+    required: true,
     enum: ['male', 'female', 'other']
   },
   cusmob: {
-    type: Number,
-    required: [true, 'Mobile number is required'],
+    type: String,
+    required: true,
     validate: {
       validator: function(v) {
-        return /^\d{10}$/.test(v.toString());
+        return /^[0-9]{10}$/.test(v);
       },
       message: props => `${props.value} is not a valid mobile number!`
     }
   },
   cusadd: {
     type: String,
-    required: [true, 'Address is required']
+    required: true
   },
   cusaadhaar: {
     type: String,
-    required: [true, 'Aadhar number is required'],
-    unique: true,
+    required: true,
     validate: {
       validator: function(v) {
-        return /^\d{4}-\d{4}-\d{4}$/.test(v);
+        return /^[0-9]{4}-[0-9]{4}-[0-9]{4}$/.test(v);
       },
       message: props => `${props.value} is not a valid Aadhar number!`
     }
   },
   fee: {
     type: Number,
-    required: [true, 'Fee is required'],
+    required: true,
     min: 0
   },
   reference: {
@@ -66,7 +64,7 @@ const MemberSchema = new mongoose.Schema({
   },
   cibil: {
     type: Number,
-    required: [true, 'CIBIL score is required'],
+    required: true,
     min: 300,
     max: 900
   },
@@ -74,12 +72,25 @@ const MemberSchema = new mongoose.Schema({
     type: Number,
     default: 0
   }
-}, { 
-  collection: 'customer',
-  timestamps: true 
+}, {
+  timestamps: true,
+  collection: 'customer'
 });
 
-// Text index for search
-MemberSchema.index({ cusfname: 'text', cussname: 'text' });
+// Auto-generate cusid before saving
+customerSchema.pre('save', function(next) {
+  if (!this.cusid) {
+    this.cusid = `CUS${Date.now()}`;
+  }
+  next();
+});
 
-module.exports = mongoose.model('Member', MemberSchema, 'customer'); 
+// Prevent OverwriteModelError
+let Customer;
+try {
+  Customer = mongoose.model('Customer');
+} catch (error) {
+  Customer = mongoose.model('Customer', customerSchema);
+}
+
+module.exports = Customer; 

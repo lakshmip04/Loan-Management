@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
+
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -52,9 +54,9 @@ export const loans = {
 
 // Members API
 export const members = {
-  create: (data) => api.post('/members', data),
   getAll: () => api.get('/members'),
   getById: (id) => api.get(`/members/${id}`),
+  create: (data) => api.post('/members', data),
   update: (id, data) => api.put(`/members/${id}`, data),
   delete: (id) => api.delete(`/members/${id}`)
 };

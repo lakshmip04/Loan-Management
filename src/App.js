@@ -7,7 +7,7 @@ import ManagerDashboard from "./pages/ManagerDashboard";
 import Members from "./pages/Members";
 import NewMember from "./pages/NewMember";
 import LoanDetails from "./pages/LoanDetails";
-import Search from "./pages/Search";
+
 import Gold from "./pages/Gold";
 import BusinessLoan from "./pages/BusinessLoan";
 import LendboxLoan from "./pages/LendboxLoan";
@@ -126,7 +126,7 @@ function App() {
         <Route path="/lendbox-loan" element={<ProtectedRoute element={<LendboxLoan />} allowedRoles={["Staff"]} />} />
         <Route path="/payments" element={<ProtectedRoute element={<Payments />} allowedRoles={["Staff"]} />} />
         <Route path="/settings" element={<ProtectedRoute element={<Settings />} allowedRoles={["Staff"]} />} />
-        <Route path="/search" element={<ProtectedRoute element={<Search />} allowedRoles={["Staff"]} />} />
+        
 
         {/* Manager Routes */}
         <Route path="/member-details" element={<ProtectedRoute element={<Members />} allowedRoles={["Manager"]} />} />

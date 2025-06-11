@@ -10,7 +10,7 @@ const config = {
   },
   
   mongodb: {
-    uri: process.env.MONGODB_URI || 'mongodb+srv://lp1304:easyfin123@loanmangement.k0lomvq.mongodb.net/?retryWrites=true&w=majority&appName=loanMangement'
+    uri: process.env.MONGODB_URI || 'mongodb+srv://lp1304:easyfin123@loanmangement.k0lomvq.mongodb.net/easyfin?retryWrites=true&w=majority&appName=loanMangement'
   },
   
   jwt: {

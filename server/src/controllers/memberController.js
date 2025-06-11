@@ -1,52 +1,44 @@
-const Member = require('../models/Member');
+const Customer = require('../models/Member');
 
 // Create new member
 const createMember = async (req, res) => {
   try {
-    console.log('Request received at /api/members POST endpoint');
-    console.log('Request headers:', req.headers);
-    console.log('Request body:', req.body);
-
-    // Format the data
     const memberData = {
-      ...req.body,
-      // Convert string dates to Date objects
-      dateOfBirth: new Date(req.body.dateOfBirth),
-      registrationDate: new Date(req.body.registrationDate),
-      // Convert string numbers to actual numbers
-      cibilScore: Number(req.body.cibilScore),
-      miscCharges: Number(req.body.miscCharges)
+      cusfname: req.body.cusfname,
+      cussname: req.body.cussname,
+      cusdob: new Date(req.body.cusdob),
+      cusgen: req.body.cusgen,
+      cusmob: req.body.cusmob,
+      cusadd: req.body.cusadd,
+      cusaadhaar: req.body.cusaadhaar,
+      fee: Number(req.body.fee),
+      reference: req.body.reference || 'SELF',
+      Date: new Date(req.body.Date || Date.now()),
+      cibil: Number(req.body.cibil),
+      category: Number(req.body.category || 0)
     };
 
-    console.log('Formatted member data:', memberData);
+    console.log('Creating member with data:', memberData);
 
-    const member = new Member(memberData);
-    console.log('Member model instance created:', member);
-    
+    const member = new Customer(memberData);
     await member.save();
-    console.log('Member saved successfully:', member);
+
+    console.log('Member created successfully:', member);
 
     res.status(201).json({
       success: true,
       data: member
     });
   } catch (error) {
-    console.error('Member registration error details:', {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    });
+    console.error('Member creation error:', error);
     
-    // Handle duplicate key errors
     if (error.code === 11000) {
-      const field = Object.keys(error.keyPattern)[0];
       return res.status(400).json({
         success: false,
-        error: `A member with this ${field} already exists`
+        error: 'A member with this ID or Aadhar number already exists'
       });
     }
 
-    // Handle validation errors
     if (error.name === 'ValidationError') {
       const messages = Object.values(error.errors).map(err => err.message);
       return res.status(400).json({
@@ -57,43 +49,36 @@ const createMember = async (req, res) => {
 
     res.status(500).json({
       success: false,
-      error: 'Error registering member'
+      error: 'Error creating member'
     });
   }
 };
 
-// Get all members
+// Get all members from the actual customer collection
 const getAllMembers = async (req, res) => {
   try {
-    const members = await Member.find()
-      .sort({ createdAt: -1 })
-      .select('cusid cusfname cussname cusmob cusaadhaar Date cusgen cusadd cibil fee reference category')
+    console.log('Fetching all members from customer collection...');
+    
+    const members = await Customer.find()
+      .sort({ Date: -1 })
       .lean();
 
-    const formattedMembers = members.map(member => ({
-      id: member._id,
-      name: `${member.cusfname} ${member.cussname}`,
-      customerId: member.cusid,
-      mobile: member.cusmob.toString(),
-      aadhar: member.cusaadhaar,
-      status: member.category === 0 ? "Active" : "Inactive",
-      gender: member.cusgen,
-      address: member.cusadd,
-      cibil: member.cibil,
-      fee: member.fee,
-      reference: member.reference,
-      registrationDate: member.Date
-    }));
-
+    console.log(`Found ${members.length} members in customer collection`);
+    
+    if (members.length > 0) {
+      console.log('Sample member data:', JSON.stringify(members[0], null, 2));
+    }
+    
     res.json({
       success: true,
-      data: formattedMembers
+      count: members.length,
+      data: members
     });
   } catch (error) {
     console.error('Get members error:', error);
     res.status(500).json({
       success: false,
-      error: 'Error fetching members'
+      error: 'Error fetching members: ' + error.message
     });
   }
 };
@@ -101,7 +86,7 @@ const getAllMembers = async (req, res) => {
 // Get member by ID
 const getMemberById = async (req, res) => {
   try {
-    const member = await Member.findById(req.params.id);
+    const member = await Customer.findById(req.params.id);
 
     if (!member) {
       return res.status(404).json({
@@ -128,15 +113,14 @@ const updateMember = async (req, res) => {
   try {
     const updateData = {
       ...req.body,
-      // Convert string dates to Date objects if provided
-      ...(req.body.dateOfBirth && { dateOfBirth: new Date(req.body.dateOfBirth) }),
-      ...(req.body.registrationDate && { registrationDate: new Date(req.body.registrationDate) }),
-      // Convert string numbers to actual numbers if provided
-      ...(req.body.cibilScore && { cibilScore: Number(req.body.cibilScore) }),
-      ...(req.body.miscCharges && { miscCharges: Number(req.body.miscCharges) })
+      cusdob: req.body.cusdob ? new Date(req.body.cusdob) : undefined,
+      Date: req.body.Date ? new Date(req.body.Date) : undefined,
+      fee: req.body.fee ? Number(req.body.fee) : undefined,
+      cibil: req.body.cibil ? Number(req.body.cibil) : undefined,
+      category: req.body.category !== undefined ? Number(req.body.category) : undefined
     };
 
-    const member = await Member.findByIdAndUpdate(
+    const member = await Customer.findByIdAndUpdate(
       req.params.id,
       updateData,
       { new: true, runValidators: true }
@@ -165,7 +149,7 @@ const updateMember = async (req, res) => {
 // Delete member
 const deleteMember = async (req, res) => {
   try {
-    const member = await Member.findByIdAndDelete(req.params.id);
+    const member = await Customer.findByIdAndDelete(req.params.id);
 
     if (!member) {
       return res.status(404).json({
