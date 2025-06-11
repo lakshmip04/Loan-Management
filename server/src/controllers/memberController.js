@@ -66,11 +66,28 @@ const createMember = async (req, res) => {
 const getAllMembers = async (req, res) => {
   try {
     const members = await Member.find()
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .select('cusid cusfname cussname cusmob cusaadhaar Date cusgen cusadd cibil fee reference category')
+      .lean();
+
+    const formattedMembers = members.map(member => ({
+      id: member._id,
+      name: `${member.cusfname} ${member.cussname}`,
+      customerId: member.cusid,
+      mobile: member.cusmob.toString(),
+      aadhar: member.cusaadhaar,
+      status: member.category === 0 ? "Active" : "Inactive",
+      gender: member.cusgen,
+      address: member.cusadd,
+      cibil: member.cibil,
+      fee: member.fee,
+      reference: member.reference,
+      registrationDate: member.Date
+    }));
 
     res.json({
       success: true,
-      data: members
+      data: formattedMembers
     });
   } catch (error) {
     console.error('Get members error:', error);

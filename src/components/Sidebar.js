@@ -100,14 +100,14 @@ function Sidebar() {
         Search Members
       </NavLink>
 
-      <NavLink to="/members" className={({ isActive }) => 
+      {/* <NavLink to="/members" className={({ isActive }) => 
         `flex items-center px-4 py-3 text-lg font-medium rounded-lg ${
           isActive ? 'text-custom bg-indigo-50' : 'text-gray-700 hover:bg-gray-50'
         }`
       }>
         <i className="fas fa-users w-5 h-5 mr-3"></i>
         Members
-      </NavLink>
+      </NavLink> */}
 
       <NavLink to="/new-member" className={({ isActive }) => 
         `flex items-center px-4 py-3 text-lg font-medium rounded-lg ${

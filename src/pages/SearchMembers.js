@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Input } from "../components/ui/input";
 import { Button } from "../components/ui/button";
@@ -10,62 +10,35 @@ import {
   TableHeader,
   TableRow,
 } from "../components/ui/table";
+import axios from "axios";
 
 const SearchMembers = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [members, setMembers] = useState([]);
   const navigate = useNavigate();
   const location = useLocation();
   const { loanType, scheme } = location.state || {};
 
-  // Mock data for members
-  const members = [
-    {
-      id: "MEM-10001",
-      name: "John Smith",
-      customerId: "67890",
-      mobile: "9876543210",
-      aadhar: "123456789012",
-      status: "Active",
-      lastLoan: "₹50,000",
-    },
-    {
-      id: "MEM-10002",
-      name: "Sarah Johnson",
-      customerId: "12345",
-      mobile: "8765432109",
-      aadhar: "234567890123",
-      status: "Active",
-      lastLoan: "₹75,000",
-    },
-    {
-      id: "MEM-10003",
-      name: "Michael Brown",
-      customerId: "54321",
-      mobile: "7654321098",
-      aadhar: "345678901234",
-      status: "Inactive",
-      lastLoan: "₹25,000",
-    },
-    {
-      id: "MEM-10004",
-      name: "Emily Davis",
-      customerId: "98765",
-      mobile: "6543210987",
-      aadhar: "456789012345",
-      status: "Active",
-      lastLoan: "₹100,000",
-    },
-    {
-      id: "MEM-10005",
-      name: "Robert Wilson",
-      customerId: "24680",
-      mobile: "5432109876",
-      aadhar: "567890123456",
-      status: "Active",
-      lastLoan: "₹60,000",
-    },
-  ];
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get('/api/members');
+      setMembers(response.data.data);
+    } catch (error) {
+      console.error("Error fetching members:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
   const filteredMembers = members.filter(
     (member) =>
@@ -74,14 +47,6 @@ const SearchMembers = () => {
       member.mobile.includes(searchQuery) ||
       member.aadhar.includes(searchQuery)
   );
-
-  const handleSearch = (e) => {
-    setSearchQuery(e.target.value);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
-  };
 
   const handleApplyLoan = (member) => {
     if (loanType === "Gold Loan") {
@@ -124,8 +89,13 @@ const SearchMembers = () => {
           </button>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">Filter</Button>
-          <Button variant="outline">Export</Button>
+          <Button 
+            variant="default"
+            onClick={() => navigate("/new-member")}
+            className="bg-custom text-white hover:bg-indigo-600"
+          >
+            Add New Member
+          </Button>
         </div>
       </div>
 
@@ -154,7 +124,7 @@ const SearchMembers = () => {
                     {filteredMembers.map((member) => (
                       <TableRow key={member.id}>
                         <TableCell className="font-medium">
-                          {member.id}
+                          {member.customerId}
                         </TableCell>
                         <TableCell>{member.name}</TableCell>
                         <TableCell>{member.mobile}</TableCell>
@@ -181,7 +151,11 @@ const SearchMembers = () => {
                                 Apply Loan
                               </Button>
                             )}
-                            <Button variant="outline" size="sm">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => navigate(`/members/${member.id}`)}
+                            >
                               View Details
                             </Button>
                           </div>
