@@ -56,6 +56,10 @@ function Dashboard() {
           <div className="p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-4">
+            <Link to="/search" className="!rounded-button flex items-center justify-center px-4 py-3 bg-custom text-white text-sm font-medium hover:bg-indigo-600">
+                <i className="fas fa-search mr-2"></i>
+                Search Members
+              </Link>
               <Link to="/new-member" className="!rounded-button flex items-center justify-center px-5 py-4 bg-custom text-white text-sm font-medium hover:bg-indigo-600">
                 <i className="fas fa-user-plus mr-2"></i>
                 New Member
@@ -68,10 +72,7 @@ function Dashboard() {
                 <i className="fas fa-money-check-alt mr-2"></i>
                 Record Payment
               </button>
-              <Link to="/search" className="!rounded-button flex items-center justify-center px-4 py-3 bg-custom text-white text-sm font-medium hover:bg-indigo-600">
-                <i className="fas fa-search mr-2"></i>
-                Search Members
-              </Link>
+              
             </div>
           </div>
         </div>
